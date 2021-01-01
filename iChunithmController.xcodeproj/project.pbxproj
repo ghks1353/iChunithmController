@@ -3,27 +3,32 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		22516524259EF770002992B2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22516523259EF770002992B2 /* AppDelegate.swift */; };
 		22516526259EF770002992B2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22516525259EF770002992B2 /* SceneDelegate.swift */; };
-		22516528259EF770002992B2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22516527259EF770002992B2 /* ViewController.swift */; };
-		2251652B259EF770002992B2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 22516529259EF770002992B2 /* Main.storyboard */; };
+		22516528259EF770002992B2 /* AppViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22516527259EF770002992B2 /* AppViewController.swift */; };
 		2251652D259EF771002992B2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2251652C259EF771002992B2 /* Assets.xcassets */; };
 		22516530259EF771002992B2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2251652E259EF771002992B2 /* LaunchScreen.storyboard */; };
+		22516542259EF9C8002992B2 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22516541259EF9C8002992B2 /* NetworkExtension.framework */; };
+		6007570C64025EBE591F55D9 /* Pods_iChunithmController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D956FAA2C4D929FE16A97DE8 /* Pods_iChunithmController.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		22516520259EF770002992B2 /* iChunithmController.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iChunithmController.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		22516523259EF770002992B2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		22516525259EF770002992B2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		22516527259EF770002992B2 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		2251652A259EF770002992B2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		22516527259EF770002992B2 /* AppViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewController.swift; sourceTree = "<group>"; };
 		2251652C259EF771002992B2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2251652F259EF771002992B2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		22516531259EF771002992B2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		22516540259EF9C8002992B2 /* iChunithmController.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iChunithmController.entitlements; sourceTree = "<group>"; };
+		22516541259EF9C8002992B2 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
+		255310448AD6C97F213CBA8F /* Pods-iChunithmController.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iChunithmController.debug.xcconfig"; path = "Target Support Files/Pods-iChunithmController/Pods-iChunithmController.debug.xcconfig"; sourceTree = "<group>"; };
+		BFB439EFB7B885271DC58BE3 /* Pods-iChunithmController.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iChunithmController.release.xcconfig"; path = "Target Support Files/Pods-iChunithmController/Pods-iChunithmController.release.xcconfig"; sourceTree = "<group>"; };
+		D956FAA2C4D929FE16A97DE8 /* Pods_iChunithmController.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iChunithmController.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -31,6 +36,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6007570C64025EBE591F55D9 /* Pods_iChunithmController.framework in Frameworks */,
+				22516542259EF9C8002992B2 /* NetworkExtension.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -42,6 +49,8 @@
 			children = (
 				22516522259EF770002992B2 /* iChunithmController */,
 				22516521259EF770002992B2 /* Products */,
+				D2A3B85881A5D1B112D7A94E /* Pods */,
+				8991E0D163E0814C09786A03 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -56,15 +65,33 @@
 		22516522259EF770002992B2 /* iChunithmController */ = {
 			isa = PBXGroup;
 			children = (
+				22516540259EF9C8002992B2 /* iChunithmController.entitlements */,
 				22516523259EF770002992B2 /* AppDelegate.swift */,
 				22516525259EF770002992B2 /* SceneDelegate.swift */,
-				22516527259EF770002992B2 /* ViewController.swift */,
-				22516529259EF770002992B2 /* Main.storyboard */,
+				22516527259EF770002992B2 /* AppViewController.swift */,
 				2251652C259EF771002992B2 /* Assets.xcassets */,
 				2251652E259EF771002992B2 /* LaunchScreen.storyboard */,
 				22516531259EF771002992B2 /* Info.plist */,
 			);
 			path = iChunithmController;
+			sourceTree = "<group>";
+		};
+		8991E0D163E0814C09786A03 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				22516541259EF9C8002992B2 /* NetworkExtension.framework */,
+				D956FAA2C4D929FE16A97DE8 /* Pods_iChunithmController.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		D2A3B85881A5D1B112D7A94E /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				255310448AD6C97F213CBA8F /* Pods-iChunithmController.debug.xcconfig */,
+				BFB439EFB7B885271DC58BE3 /* Pods-iChunithmController.release.xcconfig */,
+			);
+			path = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -74,9 +101,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 22516534259EF771002992B2 /* Build configuration list for PBXNativeTarget "iChunithmController" */;
 			buildPhases = (
+				8E3B0625F1265ECDADBED668 /* [CP] Check Pods Manifest.lock */,
 				2251651C259EF770002992B2 /* Sources */,
 				2251651D259EF770002992B2 /* Frameworks */,
 				2251651E259EF770002992B2 /* Resources */,
+				E189FBE298A26C9A69163386 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -126,18 +155,59 @@
 			files = (
 				22516530259EF771002992B2 /* LaunchScreen.storyboard in Resources */,
 				2251652D259EF771002992B2 /* Assets.xcassets in Resources */,
-				2251652B259EF770002992B2 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		8E3B0625F1265ECDADBED668 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-iChunithmController-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E189FBE298A26C9A69163386 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-iChunithmController/Pods-iChunithmController-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-iChunithmController/Pods-iChunithmController-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-iChunithmController/Pods-iChunithmController-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		2251651C259EF770002992B2 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				22516528259EF770002992B2 /* ViewController.swift in Sources */,
+				22516528259EF770002992B2 /* AppViewController.swift in Sources */,
 				22516524259EF770002992B2 /* AppDelegate.swift in Sources */,
 				22516526259EF770002992B2 /* SceneDelegate.swift in Sources */,
 			);
@@ -146,14 +216,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		22516529259EF770002992B2 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				2251652A259EF770002992B2 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		2251652E259EF771002992B2 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -283,16 +345,20 @@
 		};
 		22516535259EF771002992B2 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 255310448AD6C97F213CBA8F /* Pods-iChunithmController.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = iChunithmController/iChunithmController.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = CYYSPH8DRG;
 				INFOPLIST_FILE = iChunithmController/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 0.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.seru.util.iChunithmController;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -302,16 +368,20 @@
 		};
 		22516536259EF771002992B2 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BFB439EFB7B885271DC58BE3 /* Pods-iChunithmController.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = iChunithmController/iChunithmController.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = CYYSPH8DRG;
 				INFOPLIST_FILE = iChunithmController/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 0.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.seru.util.iChunithmController;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

@@ -1,0 +1,22 @@
+PODS:
+  - BlueSocket (1.0.52)
+  - LessUI (0.1.4):
+    - LessUI/Default (= 0.1.4)
+  - LessUI/Default (0.1.4)
+
+DEPENDENCIES:
+  - BlueSocket
+  - LessUI
+
+SPEC REPOS:
+  trunk:
+    - BlueSocket
+    - LessUI
+
+SPEC CHECKSUMS:
+  BlueSocket: 1acd943acb07b55905291d608649fcfbf8cbd57d
+  LessUI: bd64eb243e453698de18e4ee3ed3e7aff61bbda8
+
+PODFILE CHECKSUM: 776bdff8bd0b1590bc6c7542096dcdc9c16a301e
+
+COCOAPODS: 1.10.0.rc.1
