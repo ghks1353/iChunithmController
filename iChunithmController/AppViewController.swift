@@ -56,6 +56,7 @@ class AppViewController: UIViewController {
 	let buttonCoin: UIButton = UIButton()
 	let buttonService: UIButton = UIButton()
 	let buttonTest: UIButton = UIButton()
+	let buttonIRToggle: UIButton = UIButton()
 	
 	var sliderContainer: UIView = UIView()
 	var sliders: [UIView] = []
@@ -68,6 +69,8 @@ class AppViewController: UIViewController {
 	
 	private var irTouchCoords: [UITouch:[Int]] = [:]
 	private var irPresses: [Int: Bool] = [:]
+	
+	private var irAvailable: Bool = true
 
 	
 	override func viewDidLoad() {
@@ -86,6 +89,9 @@ class AppViewController: UIViewController {
 			.add(to: view)
 		buttonTest.style(color: .white, background: UIColor(rgb: 0x333333), radius: 2, title: "TEST", size: 13, bold: false)
 			.regist(to: self, act: #selector(testTouchHandler), for: .touchUpInside)
+			.add(to: view)
+		buttonIRToggle.style(color: .white, background: UIColor(rgb: 0x333333), radius: 2, title: "IR ON", size: 13, bold: false)
+			.regist(to: self, act: #selector(irTouchHandler), for: .touchUpInside)
 			.add(to: view)
 		
 		sliderContainer.back(UIColor(rgb: 0xCCCCCC))
@@ -124,10 +130,11 @@ class AppViewController: UIViewController {
 		super.viewWillLayoutSubviews()
 		
 		buttonCoin.set(x: w - 48 - 8, y: 12, w: 48, h: 42)
-		buttonService.set(x: buttonCoin.x - 48 - 8, y: 12, w: 48, h: 42)
+		buttonService.set(x: buttonCoin.x - 64 - 8, y: 12, w: 64, h: 42)
 		buttonTest.set(x: buttonService.x - 48 - 8, y: 12, w: 48, h: 42)
+		buttonIRToggle.set(x: buttonTest.x - 86 - 8, y: 12, w: 86, h: 42)
 		
-		let sliderSize: CGFloat = 360
+		let sliderSize: CGFloat = 480
 		sliderContainer.set(x: 0, y: h - sliderSize - 4, w: w, h: sliderSize)
 		
 		let blockSize: CGFloat = w / 16
@@ -135,7 +142,7 @@ class AppViewController: UIViewController {
 			sliders[i].set(x: blockSize * CGFloat(i), y: sliderContainer.y + 4, w: blockSize, h: sliderSize)
 		}
 		
-		let irsSize: CGFloat = 480
+		let irsSize: CGFloat = 420
 		let irBlockSize: CGFloat = irsSize / 6
 		for i: Int in 0 ..< irs.count {
 			irs[i].set(x: 0, y: sliderContainer.y - irsSize + (irBlockSize * CGFloat(i)),
@@ -275,6 +282,10 @@ extension AppViewController {
 		_ = try? socket?.write(from: buildData(source: .controller, type: .cabinetTest),
 							   to: Socket.createAddress(for: destIP, on: Int32(destPort)!)!)
 	}
+	@objc private func irTouchHandler(sender: UIButton) {
+		irAvailable = !irAvailable
+		sender.setTitle(irAvailable ? "IR ON" : "IR OFF", for: .normal)
+	}
 	
 	
 	
@@ -358,6 +369,8 @@ extension AppViewController {
 	}
 	
 	private func updateIRs() {
+		if !irAvailable { return }
+		
 		var availables: [Int] = []
 		var nonAvailables: [Int] = Array(0 ..< 6)
 		
@@ -391,8 +404,8 @@ extension AppViewController {
 		var nearestViews: [Int] = []
 		
 		for i: Int in 0 ..< sliders.count {
-			let b: CGRect = CGRect(x: sliders[i].x - 24, y: sliders[i].y - 24,
-								   w: sliders[i].w + 48, h: sliders[i].h + 48)
+			let b: CGRect = CGRect(x: sliders[i].x - 12, y: sliders[i].y - 12,
+								   w: sliders[i].w + 24, h: sliders[i].h + 24)
 			
 			if point.x >= b.minX && point.x <= b.maxX && point.y >= b.minY && point.y <= b.maxY {
 				nearestViews += [i]
@@ -406,8 +419,8 @@ extension AppViewController {
 		var nearestViews: [Int] = []
 		
 		for i: Int in 0 ..< irs.count {
-			let b: CGRect = CGRect(x: irs[i].x - 24, y: irs[i].y - 24,
-								   w: irs[i].w + 48, h: irs[i].h + 48)
+			let b: CGRect = CGRect(x: irs[i].x - 12, y: irs[i].y - 12,
+								   w: irs[i].w + 24, h: irs[i].h + 24)
 			
 			if point.x >= b.minX && point.x <= b.maxX && point.y >= b.minY && point.y <= b.maxY {
 				nearestViews += [i]
