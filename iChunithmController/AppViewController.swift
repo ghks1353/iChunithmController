@@ -13,6 +13,21 @@ import Socket
 
 class AppViewController: UIViewController {
 	
+	enum RawSocketType: UInt8 {
+		case button = 0x00
+		case ir = 0x01
+		case irOut = 0x02
+		case slider = 0x03
+		case sliderOut = 0x04
+		case sliderLED = 0x05
+	}
+	
+	enum RawSocketData: UInt8 {
+		case coin = 0x00
+		case service = 0x01
+		case test = 0x02
+	}
+	
 	enum MessageSources: UInt8 {
 		case game = 0
 		case controller = 1
@@ -43,10 +58,14 @@ class AppViewController: UIViewController {
 		var LedColorBlue: UInt8
 	}
 	
+	var fallbackSendCount: Int = 3
+	
 	var destIP: String = "192.168."
 	var destPort: String = "24864"
 	var socket: Socket?
 	var receiveSocket: Socket?
+	
+	var tcpSocket: Socket?
 	
 	var fingers: Int = 0
 	
@@ -70,7 +89,7 @@ class AppViewController: UIViewController {
 	private var irTouchCoords: [UITouch:[Int]] = [:]
 	private var irPresses: [Int: Bool] = [:]
 	
-	private var irAvailable: Bool = true
+	private var irAvailable: Bool = false
 
 	
 	override func viewDidLoad() {
@@ -90,7 +109,7 @@ class AppViewController: UIViewController {
 		buttonTest.style(color: .white, background: UIColor(rgb: 0x333333), radius: 2, title: "TEST", size: 13, bold: false)
 			.regist(to: self, act: #selector(testTouchHandler), for: .touchUpInside)
 			.add(to: view)
-		buttonIRToggle.style(color: .white, background: UIColor(rgb: 0x333333), radius: 2, title: "IR ON", size: 13, bold: false)
+		buttonIRToggle.style(color: .white, background: UIColor(rgb: 0x333333), radius: 2, title: "IR OFF", size: 13, bold: false)
 			.regist(to: self, act: #selector(irTouchHandler), for: .touchUpInside)
 			.add(to: view)
 		
@@ -102,6 +121,8 @@ class AppViewController: UIViewController {
 			let v: UIView = UIView()
 			
 			v.add(to: view).back(.black)
+			v.layer.borderWidth = 1
+			v.layer.borderColor = UIColor(rgb: 0xFFFFFF, a: 0.25).cgColor
 			sliders += [v]
 		}
 		for i: Int in 0 ..< 6 {
@@ -157,7 +178,7 @@ class AppViewController: UIViewController {
 	}
 	
 	override var preferredScreenEdgesDeferringSystemGestures: UIRectEdge {
-		return .top
+		return .all
 	}
 	
 	override var prefersHomeIndicatorAutoHidden: Bool {
@@ -172,39 +193,80 @@ extension AppViewController {
 	private func requestConnect(force: Bool = false) {
 		if socket != nil && !force { return }
 		
-		let alert = UIAlertController(title: "Connect to server",
-									  message: "Make sure chunithm is running, and Chunithm-vcontroller (chuniio.dll) installed",
-									  preferredStyle: .alert)
-		let ok = UIAlertAction(title: "Connect", style: .default) { (ok) in
-			let ip: String = alert.textFields?[0].text ?? ""
-			let port: String = alert.textFields?[1].text ?? ""
-			
-			self.setupClient(with: ip, port)
-			
-		}
+		dialog(title: "Use local mode?", message: "You can connect table to Windows PC.", negative: "No", positive: "Yes",
+			   onNegative: {_ in
+				let alert = UIAlertController(title: "Connect to server",
+											  message: "Make sure chunithm is running, and Chunithm-vcontroller (chuniio.dll) installed",
+											  preferredStyle: .alert)
+				let ok = UIAlertAction(title: "Connect", style: .default) { (ok) in
+					let ip: String = alert.textFields?[0].text ?? ""
+					let port: String = alert.textFields?[1].text ?? ""
+					
+					self.setupClient(with: ip, port)
+					
+				}
 
-		let cancel = UIAlertAction(title: "Cancel", style: .cancel) { (cancel) in }
+				let cancel = UIAlertAction(title: "Cancel", style: .cancel) { (cancel) in }
 
-		alert.addAction(cancel)
-		alert.addAction(ok)
-		alert.addTextField { textField in
-			textField.text = self.destIP
-			textField.placeholder = "IP"
-		}
-		alert.addTextField { textField in
-			textField.text = self.destPort
-			textField.placeholder = "Port"
-		}
+				alert.addAction(cancel)
+				alert.addAction(ok)
+				alert.addTextField { textField in
+					textField.text = self.destIP
+					textField.placeholder = "IP"
+				}
+				alert.addTextField { textField in
+					textField.text = self.destPort
+					textField.placeholder = "Port"
+				}
+				
+				self.present(alert, animated: true, completion: nil)
+			   },
+			   onPositive: {_ in
+				// connect
+				self.setupInet()
+			   }, on: nil)
 		
-		self.present(alert, animated: true, completion: nil)
+		
 	}
 	
-	private func setupClient(with ip: String, _ port: String) {
+	private func setupInet() {
+		fallbackSendCount = 1
+		tcpSocket = try? Socket.create(family: .inet, type: .stream, proto: .tcp)
+		
+		listenQueue = DispatchQueue.global(qos: .userInteractive)
+		guard let dQueue = listenQueue else {
+			return
+		}
+		dQueue.async {
+			var keepRunning = true
+			
+			try? self.tcpSocket?.listen(on: 5050)
+			try? self.tcpSocket?.acceptConnection()
+			repeat {
+				var d: Data = Data()
+				_ = try? self.tcpSocket?.read(into: &d)
+				
+				if d.count >= 1 {
+					switch(d.first ?? 0) {
+					case RawSocketType.sliderLED.rawValue:
+						self.parseRawLED(with: d)
+					default: break
+					}
+				}
+				
+				
+			} while keepRunning
+		}
+		
+//		socket?.accept
+	}
+	
+	private func setupClient(with ip: String, _ port: String, proto: String = "udp") {
 		destIP = ip
 		destPort = port
 		
-		socket = try? Socket.create(family: .inet, type: .datagram, proto: .udp)
-		receiveSocket = try? Socket.create(family: .inet, type: .datagram, proto: .udp)
+		socket = try? Socket.create(family: .inet, type: .datagram, proto: proto == "tcp" ? .tcp : .udp)
+		receiveSocket = try? Socket.create(family: .inet, type: .datagram, proto: proto == "tcp" ? .tcp : .udp)
 		
 		listenQueue = DispatchQueue.global(qos: .userInteractive)
 		guard let dQueue = listenQueue else {
@@ -230,6 +292,27 @@ extension AppViewController {
 				
 			} while keepRunning
 		}
+		
+	}
+	
+	private func parseRawLED(with data: Data) {
+		if data.count < 2 { return }
+		
+		let ledCount: Int = Int(data[1])
+		let dataPointer: Int = 2
+		for i: Int in 0 ..< ledCount {
+			let currentPointer: Int = dataPointer + (i * 4)
+			if data.count <= currentPointer + 3 { return }
+			
+			let msg: Message = Message(Source: 0,
+									   Type: MessageTypes.ledSet.rawValue,
+									   Target: data[currentPointer + 0],
+									   LedColorRed: data[currentPointer + 1],
+									   LedColorGreen: data[currentPointer + 2],
+									   LedColorBlue: data[currentPointer + 3])
+			parse(message: msg)
+		}
+		
 		
 	}
 	
@@ -271,16 +354,19 @@ extension AppViewController {
 	@objc private func coinTouchHandler(sender: UIButton) {
 		_ = try? socket?.write(from: buildData(source: .controller, type: .coin),
 							   to: Socket.createAddress(for: destIP, on: Int32(destPort)!)!)
+		_ = try? tcpSocket?.write(from: Data(bytes: [RawSocketType.button.rawValue, RawSocketData.coin.rawValue], count: 2))
 	}
 	
 	@objc private func serviceTouchHandler(sender: UIButton) {
 		_ = try? socket?.write(from: buildData(source: .controller, type: .cabinetService),
 							   to: Socket.createAddress(for: destIP, on: Int32(destPort)!)!)
+		_ = try? tcpSocket?.write(from: Data(bytes: [RawSocketType.button.rawValue, RawSocketData.service.rawValue], count: 2))
 	}
 	
 	@objc private func testTouchHandler(sender: UIButton) {
 		_ = try? socket?.write(from: buildData(source: .controller, type: .cabinetTest),
 							   to: Socket.createAddress(for: destIP, on: Int32(destPort)!)!)
+		_ = try? tcpSocket?.write(from: Data(bytes: [RawSocketType.button.rawValue, RawSocketData.test.rawValue], count: 2))
 	}
 	@objc private func irTouchHandler(sender: UIButton) {
 		irAvailable = !irAvailable
@@ -340,11 +426,13 @@ extension AppViewController {
 	
 	private func updateSliders() {
 		var availables: [Int] = []
+		var dulipcateAvailables: [Int] = []
 		var nonAvailables: [Int] = Array(0 ..< 16)
 		
 		touchCoords.forEach { k, v in
 			v.forEach { i in
 				if availables.firstIndex(of: i) == nil { availables += [i] }
+				else { dulipcateAvailables += [i] }
 			}
 		}
 		availables.forEach { i in
@@ -356,15 +444,31 @@ extension AppViewController {
 		for i: Int in 0 ..< availables.count {
 			sliderPresses[availables[i]] = true
 			
-			_ = try? socket?.write(from: buildData(source: .controller, type: .sliderPress, target: UInt8(15 - availables[i])),
-								   to: Socket.createAddress(for: destIP, on: Int32(destPort)!)!)
+			for _: Int in 0 ..< fallbackSendCount {
+				_ = try? socket?.write(from: buildData(source: .controller, type: .sliderPress, target: UInt8(15 - availables[i])),
+									   to: Socket.createAddress(for: destIP, on: Int32(destPort)!)!)
+				_ = try? tcpSocket?.write(from: Data(bytes: [RawSocketType.slider.rawValue, UInt8(15 - availables[i])], count: 2))
+			}
+		}
+		
+		for i: Int in 0 ..< dulipcateAvailables.count {
+			// just send signal again
+			
+			for _: Int in 0 ..< fallbackSendCount {
+				_ = try? socket?.write(from: buildData(source: .controller, type: .sliderPress, target: UInt8(15 - dulipcateAvailables[i])),
+									   to: Socket.createAddress(for: destIP, on: Int32(destPort)!)!)
+				_ = try? tcpSocket?.write(from: Data(bytes: [RawSocketType.slider.rawValue, UInt8(15 - dulipcateAvailables[i])], count: 2))
+			}
 		}
 		
 		for i: Int in 0 ..< nonAvailables.count {
 			sliderPresses[nonAvailables[i]] = nil
 			
-			_ = try? socket?.write(from: buildData(source: .controller, type: .sliderRelease, target: UInt8(15 - nonAvailables[i])),
-								   to: Socket.createAddress(for: destIP, on: Int32(destPort)!)!)
+			for _: Int in 0 ..< (fallbackSendCount + 1) {
+				_ = try? socket?.write(from: buildData(source: .controller, type: .sliderRelease, target: UInt8(15 - nonAvailables[i])),
+									   to: Socket.createAddress(for: destIP, on: Int32(destPort)!)!)
+				_ = try? tcpSocket?.write(from: Data(bytes: [RawSocketType.sliderOut.rawValue, UInt8(15 - nonAvailables[i])], count: 2))
+			}
 		}
 	}
 	
@@ -390,6 +494,7 @@ extension AppViewController {
 			
 			_ = try? socket?.write(from: buildData(source: .controller, type: .irBlocked, target: UInt8(5 - availables[i])),
 								   to: Socket.createAddress(for: destIP, on: Int32(destPort)!)!)
+			_ = try? tcpSocket?.write(from: Data(bytes: [RawSocketType.ir.rawValue, UInt8(15 - nonAvailables[i])], count: 2))
 		}
 		
 		for i: Int in 0 ..< nonAvailables.count {
@@ -397,15 +502,17 @@ extension AppViewController {
 			
 			_ = try? socket?.write(from: buildData(source: .controller, type: .irUnblocked, target: UInt8(5 - nonAvailables[i])),
 								   to: Socket.createAddress(for: destIP, on: Int32(destPort)!)!)
+			_ = try? tcpSocket?.write(from: Data(bytes: [RawSocketType.irOut.rawValue, UInt8(15 - nonAvailables[i])], count: 2))
 		}
 	}
 	
 	private func findSliders(with point: CGPoint) -> [Int] {
 		var nearestViews: [Int] = []
 		
+		let yAxisAddi: CGFloat = irAvailable ? 2 : 64
 		for i: Int in 0 ..< sliders.count {
-			let b: CGRect = CGRect(x: sliders[i].x - 12, y: sliders[i].y - 12,
-								   w: sliders[i].w + 24, h: sliders[i].h + 24)
+			let b: CGRect = CGRect(x: sliders[i].x - 24, y: sliders[i].y - yAxisAddi,
+								   w: sliders[i].w + 48, h: sliders[i].h + (yAxisAddi * 2))
 			
 			if point.x >= b.minX && point.x <= b.maxX && point.y >= b.minY && point.y <= b.maxY {
 				nearestViews += [i]
